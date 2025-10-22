@@ -43,4 +43,5 @@ app.get('/started', (req, res) => {
 app.use("/api/tasks", tasks);
 
 const port = process.env.PORT || 3500;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+app.listen(port, '0.0.0.0', () => console.log(`Listening on port ${port}...`));
+

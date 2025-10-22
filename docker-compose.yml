@@ -1,0 +1,43 @@
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo-db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network  
+
+  backend:
+    build: ./Application-Code/backend
+    container_name: backend-app
+    ports:
+      - "5000:3000"
+    environment:
+      - MONGO_CONN_STR=mongodb://mongo:27017/devsecops
+      - USE_DB_AUTH=false
+    depends_on:
+      - mongo
+    networks:
+      - app-network  
+
+  frontend:
+    build: ./Application-Code/frontend
+    container_name: frontend-app
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network  # tu peux le réactiver une fois le backend healthy
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
