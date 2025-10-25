@@ -1,6 +1,6 @@
 
 # Build stage
-FROM node:18-alpine AS build
+FROM node:lts-alpine3.21 AS build
 
 # Set working directory
 WORKDIR /app
@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --only=production
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
@@ -23,6 +23,7 @@ RUN npm run build
 # Production stage - Using nginxinc/nginx-unprivileged
 FROM nginxinc/nginx-unprivileged:alpine
 
+
 # Copy built assets from build stage
 COPY --from=build /app/build /usr/share/nginx/html
 
@@ -32,9 +33,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose non-privileged port
 EXPOSE 3000
 
-# Health check - Utiliser curl au lieu de wget
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD ["/bin/sh", "-c", "nc -z localhost 8080 || exit 1"]
-
-# User already set to nginx (UID 101) in base image
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

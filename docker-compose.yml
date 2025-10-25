@@ -3,7 +3,7 @@ services:
   mongo:
     image: mongo:6
     container_name: mongo-db
-    restart: always
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
@@ -14,20 +14,22 @@ services:
   backend:
     build: ./Application-Code/backend
     container_name: backend-app
+    env_file:
+      - ./Application-Code/backend/.env
     ports:
       - "5000:3000"
-    environment:
-      - MONGO_CONN_STR=mongodb://mongo:27017/devsecops
-      - USE_DB_AUTH=false
     depends_on:
       - mongo
+    restart: unless-stopped
     networks:
       - app-network  
 
   frontend:
     build: ./Application-Code/frontend
     container_name: frontend-app
-    restart: always
+    env_file:
+      - ./Application-Code/frontend/.env
+    restart: unless-stopped
     depends_on:
       - backend
     ports:

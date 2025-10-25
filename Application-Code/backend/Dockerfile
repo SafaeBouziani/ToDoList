@@ -1,25 +1,34 @@
-FROM node:20-alpine
+FROM node:lts-alpine3.21
 
+# Install small utilities for healthcheck
+RUN apk add --no-cache curl netcat-openbsd
+
+# Create app user early for non-root execution
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
+RUN chown appuser:appgroup /app
 
+# Copy package files first to leverage Docker cache
 COPY package*.json ./
 
-RUN npm install && npm cache clean --force
+# Install production dependencies
+RUN npm ci --only=production
 
-COPY . .
+# Copy app source code and give ownership to appuser
+COPY --chown=appuser:appgroup . .
 
+# Environment variables (can be overridden via Docker Compose or Kubernetes)
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-# Ajouter un utilisateur non-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Switch to non-root user
 USER appuser
 
-# Healthcheck
+# Healthcheck using /healthz endpoint
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -q --spider http://localhost:3000/ || exit 1
+  CMD curl -f http://localhost:3000/healthz || exit 1
 
-# Attendre MongoDB avant de démarrer l'app
-CMD sh -c 'until nc -z mongo 27017; do echo "Waiting for MongoDB..."; sleep 2; done; node index.js'
+# Start app (app handles DB reconnection)
+CMD ["node", "index.js"]
