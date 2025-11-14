@@ -16,6 +16,7 @@ pids
 *.pid.lock
 
 *.env
+*.secrets.yaml
 
 # Dependency directories
 **/node_modules/
