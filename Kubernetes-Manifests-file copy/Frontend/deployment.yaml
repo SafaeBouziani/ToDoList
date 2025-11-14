@@ -23,12 +23,13 @@ spec:
       containers:
         - name: frontend
           image: safaebouziani123/frontend-app:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
-          envFrom:
-            - configMapRef:
-                name: frontend-config
+          env:
+            - name: REACT_APP_BACKEND_URL
+              value: "http://api.three-tier.svc.cluster.local:3000/api/tasks"
+
           resources:
             limits:
               memory: "128Mi"
