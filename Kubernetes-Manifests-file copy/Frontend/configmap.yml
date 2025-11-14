@@ -4,5 +4,8 @@ metadata:
   name: frontend-config
   namespace: three-tier
 data:
-  REACT_APP_BACKEND_URL: "http://api:3500/api/tasks"
-  NODE_ENV: "production"
+  config.js: |
+    window._env_ = {
+      REACT_APP_BACKEND_URL: "http://192.168.49.2/api/tasks",
+      NODE_ENV: "production"
+    };
