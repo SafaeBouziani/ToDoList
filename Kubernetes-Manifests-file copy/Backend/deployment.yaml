@@ -28,7 +28,7 @@ spec:
             - containerPort: 3000
           env:
             - name: MONGO_CONN_STR
-              value: "mongodb://mongodb:27017/devsecops?directConnection=true&authSource=admin"
+              value: "mongodb://mongodb-0.mongodb:27017/devsecops?directConnection=true&authSource=admin"
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
