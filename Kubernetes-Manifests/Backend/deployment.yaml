@@ -20,6 +20,17 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         runAsNonRoot: true
+      initContainers:
+        - name: wait-for-mongo
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z mongodb-0.mongodb.three-tier.svc.cluster.local 27017;
+              do echo "Waiting for MongoDB...";
+              sleep 3;
+              done;
       containers:
         - name: backend
           image: safaebouziani123/backend-app:latest
@@ -28,7 +39,7 @@ spec:
             - containerPort: 3000
           env:
             - name: MONGO_CONN_STR
-              value: "mongodb://mongo:27017/devsecops?directConnection=true&authSource=admin"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@mongodb-0.mongodb.three-tier.svc.cluster.local:27017/devsecops?authSource=admin&directConnection=true"
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -53,7 +64,7 @@ spec:
               drop: ["ALL"]
           livenessProbe:
             httpGet:
-              path: /healthz  # ← CHANGÉ de / à /healthz
+              path: /healthz
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -61,7 +72,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /ready  # ← CHANGÉ de / à /ready
+              path: /ready
               port: 3000
             initialDelaySeconds: 10
             periodSeconds: 5

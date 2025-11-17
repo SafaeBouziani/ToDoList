@@ -20,6 +20,32 @@ spec:
         runAsGroup: 101
         fsGroup: 101
         runAsNonRoot: true
+      volumes:
+        - name: frontend-config
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+      initContainers:
+        - name: generate-config
+          image: busybox:1.36
+          env:
+            - name: REACT_APP_BACKEND_URL
+              value: "/api/tasks"
+          command:
+            - sh
+            - -c
+            - |
+              echo "window._env_ = {" > /frontend-config/config.js
+              echo "  REACT_APP_BACKEND_URL: \"${REACT_APP_BACKEND_URL}\"," >> /frontend-config/config.js
+              echo "  NODE_ENV: \"production\"" >> /frontend-config/config.js
+              echo "};" >> /frontend-config/config.js
+          volumeMounts:
+            - name: frontend-config
+              mountPath: /frontend-config
       containers:
         - name: frontend
           image: safaebouziani123/frontend-app:latest
@@ -28,8 +54,7 @@ spec:
             - containerPort: 3000
           env:
             - name: REACT_APP_BACKEND_URL
-              value: "http://api.three-tier.svc.cluster.local:3000/api/tasks"
-
+              value: "/api/tasks"
           resources:
             limits:
               memory: "128Mi"
@@ -59,16 +84,12 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
           volumeMounts:
+            - name: frontend-config
+              mountPath: /usr/share/nginx/html/config.js
+              subPath: config.js
             - name: cache
               mountPath: /var/cache/nginx
             - name: run
               mountPath: /var/run
             - name: tmp
               mountPath: /tmp
-      volumes:
-        - name: cache
-          emptyDir: {}
-        - name: run
-          emptyDir: {}
-        - name: tmp
-          emptyDir: {}

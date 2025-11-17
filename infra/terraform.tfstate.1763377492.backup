@@ -1,0 +1,119 @@
+{
+  "version": 4,
+  "terraform_version": "1.12.2",
+  "serial": 17,
+  "lineage": "ee71fd73-65d1-795f-c15b-7efba337c8cf",
+  "outputs": {
+    "aks_cluster_name": {
+      "value": "aks-team4",
+      "type": "string"
+    },
+    "ingress_service_ip": {
+      "value": "4.251.152.6",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "kubernetes_service",
+      "name": "nginx_lb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "ingress-nginx/ingress-nginx-controller",
+            "metadata": [
+              {
+                "annotations": {
+                  "meta.helm.sh/release-name": "ingress-nginx",
+                  "meta.helm.sh/release-namespace": "ingress-nginx"
+                },
+                "generation": 0,
+                "labels": {
+                  "app.kubernetes.io/component": "controller",
+                  "app.kubernetes.io/instance": "ingress-nginx",
+                  "app.kubernetes.io/managed-by": "Helm",
+                  "app.kubernetes.io/name": "ingress-nginx",
+                  "app.kubernetes.io/part-of": "ingress-nginx",
+                  "app.kubernetes.io/version": "1.14.0",
+                  "helm.sh/chart": "ingress-nginx-4.14.0"
+                },
+                "name": "ingress-nginx-controller",
+                "namespace": "ingress-nginx",
+                "resource_version": "20999",
+                "uid": "c762a381-29ff-4faf-8721-21a0ab5c34ae"
+              }
+            ],
+            "spec": [
+              {
+                "allocate_load_balancer_node_ports": true,
+                "cluster_ip": "10.0.161.189",
+                "cluster_ips": [
+                  "10.0.161.189"
+                ],
+                "external_ips": [],
+                "external_name": "",
+                "external_traffic_policy": "Cluster",
+                "health_check_node_port": 0,
+                "internal_traffic_policy": "Cluster",
+                "ip_families": [
+                  "IPv4"
+                ],
+                "ip_family_policy": "SingleStack",
+                "load_balancer_class": "",
+                "load_balancer_ip": "",
+                "load_balancer_source_ranges": [],
+                "port": [
+                  {
+                    "app_protocol": "http",
+                    "name": "http",
+                    "node_port": 32529,
+                    "port": 80,
+                    "protocol": "TCP",
+                    "target_port": "http"
+                  },
+                  {
+                    "app_protocol": "https",
+                    "name": "https",
+                    "node_port": 32187,
+                    "port": 443,
+                    "protocol": "TCP",
+                    "target_port": "https"
+                  }
+                ],
+                "publish_not_ready_addresses": false,
+                "selector": {
+                  "app.kubernetes.io/component": "controller",
+                  "app.kubernetes.io/instance": "ingress-nginx",
+                  "app.kubernetes.io/name": "ingress-nginx"
+                },
+                "session_affinity": "None",
+                "session_affinity_config": [],
+                "type": "LoadBalancer"
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": [
+                      {
+                        "hostname": "",
+                        "ip": "4.251.152.6"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
