@@ -48,6 +48,16 @@ docker-compose.override.yml
 .idea/
 *.swp
 
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*.tfplan
+*.zip
+
 # OS metadata
 ehthumbs.db
 Icon?
